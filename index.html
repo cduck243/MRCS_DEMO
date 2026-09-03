@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MRCS 컨셉 — 화면 목록</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&display=swap">
+<!--
+  ============================================================
+  MRCS · 생애위험준비지도 — 컨셉 화면 모음 (시작 페이지)
+  이 파일을 더블클릭하면 전체 화면 목록이 열립니다.
+  각 HTML은 데이터를 파일 안에 품고 있어 단독으로도 열립니다.
+  ============================================================
+-->
+<style>
+:root{
+  --paper:#FBFCFD; --surface:#FFFFFF; --surface-2:#F4F7FA;
+  --ink:#101C28; --ink-2:#3D4B5A; --ink-3:#6E7C8B;
+  --line:#E2E7ED; --line-2:#EDF1F5;
+  --jade:#0F7A70; --jade-soft:#E1F0ED; --jade-line:#A8D8D0;
+  --ochre:#9C6A0A; --ochre-soft:#F8EEDB;
+  --mute-soft:#EDF0F3; --mute-on:#9AA6B2;
+  --serif:"Gowun Batang","Apple SD Gothic Neo","Nanum Myeongjo",Georgia,serif;
+  --sans:"IBM Plex Sans KR",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0C131A; --surface:#121B24; --surface-2:#161F29;
+  --ink:#E9EEF3; --ink-2:#B4C0CB; --ink-3:#7F8C99;
+  --line:#233039; --line-2:#1B242D;
+  --jade:#4FC0B0; --jade-soft:#0F312D; --jade-line:#1F5A52;
+  --ochre:#D6A24A; --ochre-soft:#312611;
+  --mute-soft:#1C252E; --mute-on:#6E7A86;
+}}
+:root[data-theme="dark"]{
+  --paper:#0C131A; --surface:#121B24; --surface-2:#161F29;
+  --ink:#E9EEF3; --ink-2:#B4C0CB; --ink-3:#7F8C99;
+  --line:#233039; --line-2:#1B242D;
+  --jade:#4FC0B0; --jade-soft:#0F312D; --jade-line:#1F5A52;
+  --ochre:#D6A24A; --ochre-soft:#312611;
+  --mute-soft:#1C252E; --mute-on:#6E7A86;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);
+  font-size:16px;line-height:1.7;word-break:keep-all;letter-spacing:-.011em;
+  -webkit-font-smoothing:antialiased}
+h1,h2,h3,p,ul,ol,table{margin:0}
+ul,ol{padding:0;list-style:none}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--jade);outline-offset:3px}
+.wrap{width:100%;max-width:1000px;margin:0 auto;padding:0 28px}
+.mast{display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:20px 0;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:baseline;gap:12px}
+.brand b{font-family:var(--serif);font-size:19px;letter-spacing:.02em}
+.brand span{font-size:12.5px;color:var(--ink-3)}
+.stamp{font-size:11.5px;color:var(--ink-3);letter-spacing:.1em;text-transform:uppercase}
+
+.head{padding:44px 0 34px}
+.eyebrow{font-size:11.5px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--jade)}
+.head h1{margin-top:12px;font-family:var(--serif);font-size:clamp(27px,3.6vw,38px);
+  font-weight:700;line-height:1.34;letter-spacing:-.03em}
+.head p{margin-top:14px;max-width:62ch;font-size:16px;line-height:1.85;color:var(--ink-2);font-weight:300}
+
+.list{border-top:1px solid var(--line)}
+.item{display:grid;grid-template-columns:56px 1fr auto;gap:22px;align-items:center;
+  padding:22px 6px;border-bottom:1px solid var(--line);transition:background .12s ease}
+a.item:hover{background:var(--surface-2)}
+.item__n{font-family:var(--serif);font-size:27px;font-weight:700;color:var(--jade);
+  font-variant-numeric:tabular-nums;line-height:1}
+.item.todo .item__n{color:var(--ink-3)}
+.item__t{font-size:18px;font-weight:600;letter-spacing:-.02em}
+.item__d{margin-top:5px;font-size:14px;line-height:1.7;color:var(--ink-2);font-weight:300;max-width:58ch}
+.item__f{margin-top:7px;font-size:11.5px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.badge{font-size:11.5px;font-weight:600;padding:4px 11px;white-space:nowrap}
+.badge.done{background:var(--jade-soft);color:var(--jade)}
+.badge.todo{background:var(--mute-soft);color:var(--mute-on)}
+.item.todo{opacity:.62}
+
+.sec{margin-top:52px}
+.sec h2{font-family:var(--serif);font-size:20px;font-weight:700;letter-spacing:-.02em;
+  padding-bottom:10px;border-bottom:1px solid var(--line)}
+.sec p{margin-top:14px;font-size:14.5px;line-height:1.9;color:var(--ink-2);font-weight:300;max-width:72ch}
+.files{width:100%;border-collapse:collapse;margin-top:16px;font-size:13.5px}
+.files th{text-align:left;padding:9px 10px;font-size:11.5px;letter-spacing:.06em;
+  color:var(--ink-3);font-weight:600;border-bottom:1px solid var(--line)}
+.files td{padding:11px 10px;border-bottom:1px solid var(--line-2);color:var(--ink-2);
+  font-weight:300;vertical-align:top;line-height:1.6}
+.files td:first-child{font-weight:600;color:var(--ink);white-space:nowrap}
+.files td:last-child{font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--ink-3)}
+.note{margin-top:22px;padding:16px 18px;background:var(--ochre-soft);
+  border-left:3px solid var(--ochre);font-size:13.5px;line-height:1.8;color:var(--ink-2)}
+.note b{display:block;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ochre);margin-bottom:6px;font-weight:600}
+.foot{margin-top:54px;border-top:1px solid var(--line);padding:24px 0 44px;
+  display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;
+  font-size:12.5px;color:var(--ink-3);font-weight:300}
+.foot b{font-weight:600;color:var(--ink-2)}
+@media (max-width:640px){
+  .wrap{padding:0 18px}
+  .item{grid-template-columns:40px 1fr;gap:14px}
+  .item .badge{grid-column:2}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="mast">
+    <div class="brand"><b>MRCS</b><span>생애위험준비지도 · 컨셉 화면</span></div>
+    <span class="stamp">2026-09-02</span>
+  </header>
+
+  <div class="head">
+    <p class="eyebrow">Screen Index</p>
+    <h1>화면 목록</h1>
+    <p>다섯 화면이 이어져 있습니다. 1단계부터 순서대로 보셔도 되고,
+       위쪽 단계 표시줄로 아무 데나 바로 가셔도 됩니다.</p>
+    <p style="margin-top:10px"><a class="btn" href="step1.html"
+       style="display:inline-block;padding:12px 22px;background:var(--jade);color:#fff;font-size:15px;font-weight:700">1단계부터 시작하기 →</a></p>
+  </div>
+
+  <div class="list">
+    <a class="item" href="step1.html">
+      <span class="item__n">1</span>
+      <span>
+        <span class="item__t">생애위험지도의 이해</span>
+        <span class="item__d">기존 보장분석의 한계를 짚고, 위험을 수용·전가·회피의 관점으로 바라보게 합니다. 5단계 프로세스를 안내합니다.</span>
+        <span class="item__f">step1.html · 기획서 p.2 / 25 / 27</span>
+      </span>
+      <span class="badge done">완료</span>
+    </a>
+
+    <a class="item" href="step2.html">
+      <span class="item__n">2</span>
+      <span>
+        <span class="item__t">위험에 대해 이해하기</span>
+        <span class="item__d">전체 질병 18개 분야와 중증질환 4가지 중에서 고릅니다. 선택은 분야 단위로 하고, 그 안의 질병 212개는 2단 리더로 읽습니다.</span>
+        <span class="item__f">step2.html · 기획서 p.3~5 / 11~12 / 28</span>
+      </span>
+      <span class="badge done">완료</span>
+    </a>
+
+    <a class="item" href="step3.html">
+      <span class="item__n">3</span>
+      <span>
+        <span class="item__t">나의 준비수준 결정하기</span>
+        <span class="item__d">소득·지출·비상자금을 직접 입력하거나 소득분위 통계로 자동 입력합니다. 위험인내수준을 고르고, 공적·사적 준비수단 11가지를 확인합니다.</span>
+        <span class="item__f">step3.html · 기획서 p.6~8 / 13~14</span>
+      </span>
+      <span class="badge done">완료</span>
+    </a>
+
+    <a class="item" href="step4.html">
+      <span class="item__n">4</span>
+      <span>
+        <span class="item__t">준비지도 확인하기</span>
+        <span class="item__d">분야별로 필요 금액과 준비된 금액을 비교합니다. 실손이 메우는 병원비와 내가 낼 병원비를 나누고, 정액담보가 그 자기부담과 끊긴 생활비를 얼마나 감당하는지 보여 줍니다. 급부 7종은 있음·없음·해당없음·보장 밖으로 표시하고, 분야를 펼치면 질병군 단위로 같은 내용을 볼 수 있습니다.</span>
+        <span class="item__f">step4.html · 기획서 p.9 / 15~21</span>
+      </span>
+      <span class="badge done">완료</span>
+    </a>
+
+    <a class="item" href="step5.html">
+      <span class="item__n">5</span>
+      <span>
+        <span class="item__t">대안 확인하기</span>
+        <span class="item__d">실제로 겪을 가능성과 비어 있는 금액을 함께 보고 먼저 준비할 다섯 가지를 고릅니다. AI가 지도 전체를 문장으로 정리하고, 보장리포트를 PDF로 내보내거나 비대면·비실명 상담으로 연결합니다.</span>
+        <span class="item__f">step5.html · 기획서 p.16</span>
+      </span>
+      <span class="badge done">완료</span>
+    </a>
+  </div>
+
+  <section class="sec">
+    <h2>데이터</h2>
+    <p>화면은 데이터를 안에 품고 있어 이 폴더 없이도 동작합니다. API로 옮길 때 쓰는 원본입니다.</p>
+    <table class="files">
+      <thead><tr><th>파일</th><th>내용</th><th>규모</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>mrcs_risk_data.json</td>
+          <td>질병 데이터 — 대분류 18 · 중분류 212 · 중증질환 4</td>
+          <td>726 KB</td>
+        </tr>
+        <tr>
+          <td>mrcs_level_data.json</td>
+          <td>준비수준 데이터 — 가구 25행 · 인내수준 3 · 준비수단 11종</td>
+          <td>28 KB</td>
+        </tr>
+        <tr>
+          <td>mrcs_map_data.json</td>
+          <td>4단계 계산 데이터 — 성별 진료비 통계 · 급부 필요도 · 담보 매핑 · 계수</td>
+          <td>772 KB</td>
+        </tr>
+        <tr>
+          <td>mrcs_alt_data.json</td>
+          <td>5단계 데이터 — 6조합 우선순위 · 채우는 방법 · 공적 제도</td>
+          <td>135 KB</td>
+        </tr>
+        <tr>
+          <td>문구작성지침.md</td>
+          <td>질병 문구 작성 원칙</td>
+          <td>5 KB</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="sec">
+    <h2>개발 사양서</h2>
+    <p>계산 로직과 데이터 포맷은 <code>docs/</code> 에 모았습니다.</p>
+    <table class="files">
+      <thead><tr><th>파일</th><th>내용</th><th>규모</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>docs/개발정의서_STEP4.md</td>
+          <td>4단계 계산 로직 · 표시 데이터 · 입력 포맷</td>
+          <td>24 KB</td>
+        </tr>
+        <tr>
+          <td>docs/개발정의서_STEP5.md</td>
+          <td>5단계 우선순위 산정 · AI 분석 · 리포트 · API</td>
+          <td>11 KB</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="sec">
+    <h2>근거</h2>
+    <p>질병 분류는 통계청 <strong>KCD 8차</strong>와 WHO ICD,
+       질병 설명은 질병관리청 국가건강정보포털·대한의학회 임상진료지침정보센터,
+       진료비 통계는 국민건강보험공단·건강보험심사평가원 <strong>2024년 자료</strong>입니다.</p>
+    <p>가계 소득·지출은 통계청 가계동향조사, 공적 제도는 국민건강보험공단·보건복지부·고용노동부,
+       담보 분류는 한국신용정보원 표준 담보코드를 따랐습니다. 확인일 2026-09-02.</p>
+    <div class="note">
+      <b>확인 안내</b>
+      예시용 시연 화면입니다. 질병 설명 212건은 <strong>의료전문가 검수 필요</strong> 상태이고,
+      보유 담보와 금액은 가상의 예시입니다. 특정 보험상품을 권유하지 않습니다.
+    </div>
+  </section>
+
+  <footer class="foot">
+    <p><b>헤인파트너스(주)</b> · MRCS 생애위험준비지도</p>
+    <p>본 서비스는 정보 제공을 목적으로 하며, 특정 보험상품의 가입을 권유하지 않습니다.</p>
+  </footer>
+</div>
+</body>
+</html>

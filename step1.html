@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>생애위험준비지도</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&display=swap">
+<!--
+  ============================================================
+  MRCS · 생애위험준비지도
+  1페이지 — STEP 1 생애위험지도의 이해
+
+  전체 단계 (2026-09 확정, 5단계)
+    1. 생애위험지도의 이해   ← 이 화면
+    2. 위험에 대해 이해하기
+    3. 나의 준비수준 결정하기
+    4. 준비지도 확인하기
+    5. 대안 확인하기
+
+  기획서 대응 : 슬라이드 2 / 25 / 27
+  하단 구성   : 의료진 확인 안내 + 근거 출처(문단 형식)
+  구현 형태   : 단일 HTML 파일 (외부 의존성 = Google Fonts 뿐)
+  기준 해상도 : PC 우선 반응형
+  색상 변경   : <style> 최상단 :root 블록의 CSS 변수만 교체하면 전체 반영
+  ============================================================
+-->
+<style>
+:root{
+  --paper:#FBFCFD; --surface:#FFFFFF; --surface-2:#F4F7FA;
+  --ink:#101C28; --ink-2:#3D4B5A; --ink-3:#6E7C8B;
+  --line:#E2E7ED; --line-2:#EDF1F5;
+  --deep:#0E2231; --deep-ink:#F2F6F9; --deep-ink-2:#9FB3C2; --deep-line:rgba(255,255,255,.14);
+  --jade:#0F7A70; --jade-on:#0F7A70; --jade-soft:#E1F0ED;
+  --ochre:#9C6A0A; --ochre-soft:#F8EEDB;
+  --clay:#A5384A; --clay-soft:#F8E6E9;
+  --mute-soft:#EDF0F3; --mute-on:#9AA6B2;
+  --serif:"Gowun Batang", "Apple SD Gothic Neo", "Nanum Myeongjo", Georgia, serif;
+  --sans:"IBM Plex Sans KR", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --wrap:1120px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0C131A; --surface:#121B24; --surface-2:#161F29;
+    --ink:#E9EEF3; --ink-2:#B4C0CB; --ink-3:#7F8C99;
+    --line:#233039; --line-2:#1B242D;
+    --deep:#080F15; --deep-ink:#EDF2F6; --deep-ink-2:#93A5B3; --deep-line:rgba(255,255,255,.1);
+    --jade:#4FC0B0; --jade-on:#4FC0B0; --jade-soft:#0F312D;
+    --ochre:#D6A24A; --ochre-soft:#312611;
+    --clay:#E08491; --clay-soft:#31191D;
+    --mute-soft:#1C252E; --mute-on:#6E7A86;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0C131A; --surface:#121B24; --surface-2:#161F29;
+  --ink:#E9EEF3; --ink-2:#B4C0CB; --ink-3:#7F8C99;
+  --line:#233039; --line-2:#1B242D;
+  --deep:#080F15; --deep-ink:#EDF2F6; --deep-ink-2:#93A5B3; --deep-line:rgba(255,255,255,.1);
+  --jade:#4FC0B0; --jade-on:#4FC0B0; --jade-soft:#0F312D;
+  --ochre:#D6A24A; --ochre-soft:#312611;
+  --clay:#E08491; --clay-soft:#31191D;
+  --mute-soft:#1C252E; --mute-on:#6E7A86;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);
+  font-size:16px;line-height:1.7;word-break:keep-all;letter-spacing:-.011em;
+  -webkit-font-smoothing:antialiased}
+h1,h2,h3,p,ul,ol,figure,table{margin:0}
+ul,ol{padding:0;list-style:none}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--jade);outline-offset:3px;border-radius:3px}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+
+.wrap{width:100%;max-width:var(--wrap);margin:0 auto;padding:0 28px}
+.band{padding:76px 0;border-top:1px solid var(--line-2)}
+.band--plain{background:var(--paper)}
+.band--panel{background:var(--surface-2)}
+.band--deep{background:var(--deep);color:var(--deep-ink);border-top:0}
+
+.eyebrow{font-size:11.5px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--jade-on);font-family:var(--sans)}
+.band--deep .eyebrow{color:var(--jade)}
+.h2{font-family:var(--serif);font-weight:700;font-size:clamp(24px,3vw,33px);line-height:1.42;
+  letter-spacing:-.02em;text-wrap:balance;margin-top:14px}
+.lede{margin-top:16px;max-width:62ch;color:var(--ink-2);font-size:16.5px;line-height:1.85;font-weight:300}
+.band--deep .lede{color:var(--deep-ink-2)}
+
+/* ---------- masthead ---------- */
+.mast{display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:20px 0;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:baseline;gap:12px}
+.brand b{font-family:var(--serif);font-size:19px;letter-spacing:.02em}
+.brand span{font-size:12.5px;color:var(--ink-3);letter-spacing:.02em}
+.mast .stamp{font-size:11.5px;color:var(--ink-3);letter-spacing:.1em;text-transform:uppercase}
+
+/* ---------- step rail ---------- */
+.rail{display:flex;gap:0;padding:18px 0 0;overflow-x:auto;scrollbar-width:none}
+.rail::-webkit-scrollbar{display:none}
+.rail li{flex:1 1 0;min-width:104px;padding:0 0 12px;border-bottom:2px solid var(--line);
+  display:flex;flex-direction:column;gap:3px}
+.rail li a{display:flex;flex-direction:column;gap:3px;text-decoration:none}
+.rail li a:hover b,.rail li a:hover span{color:var(--jade)}
+.rail li b{font-family:"IBM Plex Sans KR",monospace;font-size:11px;font-weight:600;
+  letter-spacing:.1em;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.rail li span{font-size:13.5px;font-weight:500;color:var(--ink-3);white-space:nowrap}
+.rail li[aria-current]{border-bottom-color:var(--jade)}
+.rail li[aria-current] b{color:var(--jade-on)}
+.rail li[aria-current] span{color:var(--ink);font-weight:600}
+
+/* ---------- hero ---------- */
+.hero{display:grid;grid-template-columns:1.08fr .92fr;gap:56px;align-items:start;padding:64px 0 72px}
+.hero h1{font-family:var(--serif);font-weight:700;font-size:clamp(31px,4.4vw,50px);
+  line-height:1.3;letter-spacing:-.028em;text-wrap:balance}
+.hero h1 i{font-style:normal;
+  background:linear-gradient(transparent 62%, var(--jade-soft) 62%);
+  box-decoration-break:clone;-webkit-box-decoration-break:clone;padding:0 2px}
+.hero p{margin-top:22px;max-width:46ch;color:var(--ink-2);font-size:17px;line-height:1.85;font-weight:300}
+.kicker{font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--jade-on)}
+.acts{display:flex;flex-wrap:wrap;gap:10px;margin-top:32px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 24px;border-radius:2px;
+  font-size:15px;font-weight:600;letter-spacing:-.01em;border:1px solid transparent;
+  text-decoration:none;transition:background .15s ease,border-color .15s ease,color .15s ease}
+.btn--go{background:var(--jade);color:#fff}
+:root[data-theme="dark"] .btn--go, :root:not([data-theme="light"]) .btn--go{color:#06201C}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]) .btn--go{color:#fff}}
+.btn--go:hover{filter:brightness(1.08)}
+.btn--quiet{border-color:var(--line);color:var(--ink-2);background:var(--surface)}
+.btn--quiet:hover{border-color:var(--ink-3);color:var(--ink)}
+.fineprint{margin-top:18px;font-size:12.5px;color:var(--ink-3);letter-spacing:0}
+
+/* ---------- matrix preview ---------- */
+.preview{background:var(--surface);border:1px solid var(--line);padding:22px 22px 18px}
+.preview__top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+  padding-bottom:14px;border-bottom:1px solid var(--line-2)}
+.preview__top b{font-size:14px;font-weight:600;letter-spacing:-.01em}
+.preview__top span{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+.mx{width:100%;border-collapse:separate;border-spacing:3px;margin-top:12px;
+  font-size:11.5px;font-variant-numeric:tabular-nums}
+.mx th{font-weight:600;color:var(--ink-3);padding:0 0 4px;text-align:center;letter-spacing:-.02em}
+.mx th[scope=row]{text-align:left;padding-right:8px;color:var(--ink-2);white-space:nowrap;font-size:12.5px}
+.mx td{height:28px;text-align:center;font-weight:600;letter-spacing:-.02em}
+.ok{background:var(--jade-soft);color:var(--jade-on)}
+.low{background:var(--ochre-soft);color:var(--ochre)}
+.no{background:var(--clay-soft);color:var(--clay)}
+.na{background:var(--mute-soft);color:var(--mute-on)}
+.key{display:flex;flex-wrap:wrap;gap:14px;margin-top:14px;font-size:11.5px;color:var(--ink-3)}
+.key i{width:8px;height:8px;display:inline-block;margin-right:6px;vertical-align:1px}
+
+/* ---------- three observations ---------- */
+.obs{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:40px;
+  border-top:1px solid var(--line)}
+.obs > li{padding:28px 26px 30px;border-right:1px solid var(--line)}
+.obs > li:last-child{border-right:0}
+.obs__n{font-size:11px;font-weight:600;letter-spacing:.14em;color:var(--ink-3);
+  font-variant-numeric:tabular-nums}
+.obs h3{margin-top:10px;font-family:var(--serif);font-size:20px;font-weight:700;
+  letter-spacing:-.02em;line-height:1.45}
+.obs p{margin-top:9px;font-size:14.5px;line-height:1.8;color:var(--ink-2);font-weight:300}
+
+/* ---------- the question ---------- */
+.ask{max-width:760px}
+.ask__q{font-family:var(--serif);font-size:clamp(21px,2.6vw,28px);font-weight:700;
+  line-height:1.55;letter-spacing:-.02em;text-wrap:balance}
+.ask__list{margin-top:26px;display:flex;flex-direction:column;gap:1px;background:var(--line)}
+.ask__list li{background:var(--surface);padding:18px 22px;display:flex;gap:16px;align-items:baseline}
+.ask__list b{font-family:var(--serif);font-size:17px;color:var(--clay);flex:0 0 auto}
+.ask__list p{font-size:15.5px;line-height:1.75;color:var(--ink-2);font-weight:300}
+.ask__list strong{font-weight:600;color:var(--ink)}
+.ask__a{margin-top:26px;padding-left:20px;border-left:3px solid var(--jade);
+  font-family:var(--serif);font-size:19px;font-weight:700;line-height:1.6;letter-spacing:-.015em}
+
+/* ---------- three stances ---------- */
+.stance{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--deep-line);
+  margin-top:44px;border:1px solid var(--deep-line)}
+.stance li{background:var(--deep);padding:28px 26px 30px}
+.stance b{display:block;font-family:var(--serif);font-size:21px;font-weight:700;letter-spacing:-.01em}
+.stance em{display:block;font-style:normal;margin-top:4px;font-size:11.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--jade)}
+.stance p{margin-top:12px;font-size:14.5px;line-height:1.8;color:var(--deep-ink-2);font-weight:300}
+
+/* ---------- five steps ---------- */
+.steps{margin-top:40px;border-top:1px solid var(--line)}
+.steps > li{display:grid;grid-template-columns:76px 1fr 88px;gap:24px;align-items:start;
+  padding:26px 0;border-bottom:1px solid var(--line)}
+.steps__n{font-family:var(--serif);font-size:30px;font-weight:700;line-height:1;
+  color:var(--jade-on);font-variant-numeric:tabular-nums;padding-top:2px}
+.steps h3{font-size:18px;font-weight:600;letter-spacing:-.02em}
+.steps p{margin-top:6px;font-size:15px;line-height:1.78;color:var(--ink-2);font-weight:300;max-width:58ch}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.tags span{font-size:11.5px;font-weight:500;color:var(--ink-2);background:var(--surface-2);
+  border:1px solid var(--line);padding:3px 9px;letter-spacing:-.01em}
+.band--panel .tags span{background:var(--surface)}
+.steps__ref{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);
+  text-align:right;padding-top:6px;font-variant-numeric:tabular-nums}
+
+/* ---------- closing ---------- */
+.close{text-align:center;padding:82px 0}
+.close h2{font-family:var(--serif);font-size:clamp(24px,3.2vw,34px);font-weight:700;
+  line-height:1.45;letter-spacing:-.025em;text-wrap:balance}
+.close p{margin-top:14px;color:var(--ink-2);font-weight:300}
+.close .acts{justify-content:center;margin-top:28px}
+
+/* ---------- handoff notes ---------- */
+.notes{border:1px solid var(--line);background:var(--surface);margin:0 0 64px}
+.notes summary{padding:16px 22px;cursor:pointer;font-size:13.5px;font-weight:600;
+  letter-spacing:-.01em;color:var(--ink-2);list-style:none}
+.notes summary::-webkit-details-marker{display:none}
+.notes summary::before{content:"▸ ";color:var(--jade-on)}
+.notes[open] summary::before{content:"▾ "}
+.notes__body{padding:0 22px 22px;border-top:1px solid var(--line-2);
+  display:grid;grid-template-columns:repeat(3,1fr);gap:28px;padding-top:20px}
+.notes h4{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--jade-on);
+  margin-bottom:8px}
+.notes ul{display:flex;flex-direction:column;gap:6px}
+.notes li{font-size:13px;line-height:1.65;color:var(--ink-2);font-weight:300;
+  padding-left:12px;position:relative}
+.notes li::before{content:"–";position:absolute;left:0;color:var(--ink-3)}
+
+/* ---------- 의료 확인 안내 + 근거 ---------- */
+.ground{padding:44px 0 0}
+.ground__notice{background:var(--ochre-soft);border-left:3px solid var(--ochre);padding:20px 24px}
+.ground__nh{font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ochre);margin-bottom:8px}
+.ground__notice p:last-child{font-size:14.5px;line-height:1.85;color:var(--ink-2);font-weight:400;max-width:74ch}
+.ground__src{margin-top:36px;margin-bottom:40px;max-width:74ch}
+.ground__sh{font-family:var(--serif);font-size:19px;font-weight:700;letter-spacing:-.02em;
+  padding-bottom:10px;border-bottom:1px solid var(--line)}
+.ground__src p{margin-top:14px;font-size:14.5px;line-height:1.9;color:var(--ink-2);font-weight:300}
+.ground__links{margin-top:18px!important;font-size:12.5px;color:var(--ink-3)}
+.ground__links a{color:var(--ink-2);text-decoration:underline;text-underline-offset:2px}
+.ground__links a:hover{color:var(--jade)}
+.ground__updated{margin-top:14px!important;font-size:12.5px;color:var(--ink-3);font-weight:300}
+
+.foot{border-top:1px solid var(--line);padding:26px 0 42px;display:flex;flex-wrap:wrap;
+  justify-content:space-between;gap:12px;font-size:12.5px;color:var(--ink-3);font-weight:300}
+.foot b{font-weight:600;color:var(--ink-2)}
+
+@media (max-width:940px){
+  .hero{grid-template-columns:1fr;gap:40px;padding:44px 0 52px}
+  .obs,.stance,.notes__body{grid-template-columns:1fr}
+  .obs > li{border-right:0;border-bottom:1px solid var(--line)}
+  .obs > li:last-child{border-bottom:0}
+  .steps > li{grid-template-columns:52px 1fr}
+  .steps__ref{display:none}
+  .band{padding:56px 0}
+  .wrap{padding:0 20px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="mast">
+    <div class="brand"><b>MRCS</b><span>생애위험준비지도</span></div>
+    <span class="stamp">Step 1 of 5</span>
+  </header>
+
+  <ol class="rail">
+    <li aria-current="step"><b>01</b><span>지도 이해</span></li>
+    <li><a href="step2.html"><b>02</b><span>위험 이해</span></a></li>
+    <li><a href="step3.html"><b>03</b><span>수준 결정</span></a></li>
+    <li><a href="step4.html"><b>04</b><span>준비지도</span></a></li>
+    <li><a href="step5.html"><b>05</b><span>대안 확인</span></a></li>
+  </ol>
+
+  <section class="hero">
+    <div>
+      <p class="kicker">지도 이해하기</p>
+      <h1>위험은 분석하는 것이 아니라,<br><i>준비하는 것</i>입니다.</h1>
+      <p>내가 걱정하는 질병과 사고가 어떤 것인지 이해하고, 내가 견딜 수 있는 수준을 정합니다.
+         그리고 지금 얼마나 준비되어 있는지를 한 장의 지도로 확인한 다음,
+         비어 있는 곳을 어떻게 채울지 함께 살펴봅니다.</p>
+      <div class="acts">
+        <a class="btn btn--go" href="#steps">내 준비지도 그리기</a>
+        <a class="btn btn--quiet" href="#why">먼저 왜 필요한지 보기</a>
+      </div>
+      <p class="fineprint">가입 권유가 아닙니다 · 실명 정보 없이 진행됩니다 · 약 5분</p>
+    </div>
+
+    <figure class="preview">
+      <figcaption class="preview__top">
+        <b>완성된 준비지도</b>
+        <span>예시 화면</span>
+      </figcaption>
+      <table class="mx">
+        <thead>
+          <tr><th scope="col"><span class="sr"></span></th>
+            <th scope="col">진단</th><th scope="col">수술</th><th scope="col">치료</th>
+            <th scope="col">입원</th><th scope="col">통원</th><th scope="col">간병</th><th scope="col">실손</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">암</th>
+            <td class="ok">충분</td><td class="ok">충분</td><td class="low">부족</td>
+            <td class="low">부족</td><td class="no">없음</td><td class="no">없음</td><td class="ok">충분</td></tr>
+          <tr><th scope="row">심혈관질환</th>
+            <td class="ok">충분</td><td class="low">부족</td><td class="low">부족</td>
+            <td class="no">없음</td><td class="no">없음</td><td class="na">–</td><td class="ok">충분</td></tr>
+          <tr><th scope="row">뇌혈관질환</th>
+            <td class="low">부족</td><td class="no">없음</td><td class="low">부족</td>
+            <td class="no">없음</td><td class="low">부족</td><td class="no">없음</td><td class="ok">충분</td></tr>
+          <tr><th scope="row">치매</th>
+            <td class="no">없음</td><td class="na">–</td><td class="no">없음</td>
+            <td class="no">없음</td><td class="no">없음</td><td class="no">없음</td><td class="low">부족</td></tr>
+        </tbody>
+      </table>
+      <div class="key">
+        <span><i class="ok" style="background:var(--jade-soft)"></i>충분</span>
+        <span><i style="background:var(--ochre-soft);display:inline-block;width:8px;height:8px"></i>부족</span>
+        <span><i style="background:var(--clay-soft);display:inline-block;width:8px;height:8px"></i>없음</span>
+        <span><i style="background:var(--mute-soft);display:inline-block;width:8px;height:8px"></i>이 병엔 해당 없음</span>
+      </div>
+    </figure>
+  </section>
+</div>
+
+<section class="band band--panel" id="why">
+  <div class="wrap">
+    <p class="eyebrow">알고 계셨나요</p>
+    <h2 class="h2">보장분석은 좋은 도구입니다.<br>그런데 왜 이해되지 않을까요?</h2>
+    <p class="lede">사망보험금 중심의 재정설계에서, 암 같은 중대질병에 대비하는 생활설계를 지나,
+      이제는 다양한 질병과 사고를 종합적으로 확인하는 보장분석까지 왔습니다.
+      분명 발전해 온 도구인데, 정작 소비자에게 남는 것은 이해가 아니라 압박입니다.</p>
+
+    <ol class="obs">
+      <li>
+        <p class="obs__n">관찰 01</p>
+        <h3>도구는 좋아졌습니다</h3>
+        <p>질병과 사고에 얼마나 대비하고 있는지 한눈에 보여주는 방식으로 계속 발전해 왔습니다.</p>
+      </li>
+      <li>
+        <p class="obs__n">관찰 02</p>
+        <h3>그런데 읽히지 않습니다</h3>
+        <p>보장의 내용과 수준이 그래프와 금액으로만 제시되니, 상담사의 설명에 무심코 고개를 끄덕이게 됩니다.</p>
+      </li>
+      <li>
+        <p class="obs__n">관찰 03</p>
+        <h3>결국 압박으로 남습니다</h3>
+        <p>내가 궁금한 것보다 “혹시 모를 질병과 사고가 위험하니 가입해야 한다”는 메시지만 남습니다.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section class="band band--plain">
+  <div class="wrap ask">
+    <p class="eyebrow">잠깐 생각해볼 것</p>
+    <p class="ask__q" style="margin-top:14px">월 10만원짜리 암보험을 20년 동안 납입하고,
+      80세까지 보장을 받는다고 해봅시다.</p>
+    <ol class="ask__list">
+      <li><b>?</b><p>보험기간 내내 암 진단을 받거나 치료를 받은 적이 <strong>한 번도 없다면</strong> 어떨까요?</p></li>
+      <li><b>?</b><p>진단을 받았는데 정작 받은 <strong>보험금이 너무 소액</strong>이라면 어떨까요?</p></li>
+      <li><b>?</b><p>그 20년 동안 낸 <strong>2,400만원</strong>은 나에게 어떤 의미였을까요?</p></li>
+    </ol>
+    <p class="ask__a">그래서 보장은 급하게 고르는 것이 아니라,<br>천천히 생각하고 결정해야 합니다.</p>
+  </div>
+</section>
+
+<section class="band band--deep">
+  <div class="wrap">
+    <p class="eyebrow">MRCS의 관점</p>
+    <h2 class="h2" style="max-width:20ch">위험은 무서운 것이 아니라, 결정할 수 있는 불확실성입니다</h2>
+    <p class="lede">보험은 미래에 발생할지 모르는 질병과 사고에 대비해 지금 준비하는, 선량한 목적의 금융상품입니다.
+      위험은 발생할 수도 있고 그렇지 않을 수도 있습니다. 그렇기 때문에 나의 상황에 따라 스스로 선택할 수 있습니다.</p>
+    <ul class="stance">
+      <li>
+        <em>Retain</em>
+        <b>수용한다</b>
+        <p>내가 가진 소득과 비상자금으로 감당하겠다고 결정하는 것. 모든 위험에 보험이 필요한 것은 아닙니다.</p>
+      </li>
+      <li>
+        <em>Transfer</em>
+        <b>전가한다</b>
+        <p>내가 감당하기 어려운 크기의 위험만 골라 보험으로 넘기는 것. 이것이 보험의 본래 역할입니다.</p>
+      </li>
+      <li>
+        <em>Avoid</em>
+        <b>회피한다</b>
+        <p>생활습관과 건강관리로 발생 확률 자체를 낮추는 것. 준비의 시작은 여기일 수도 있습니다.</p>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<section class="band band--panel" id="steps">
+  <div class="wrap">
+    <p class="eyebrow">진행 방법</p>
+    <h2 class="h2">준비지도는 다섯 단계로 그려집니다</h2>
+    <p class="lede">각 단계는 1~2분이면 충분합니다. 중간에 멈춰도 지금까지의 선택은 그대로 남습니다.</p>
+
+    <ol class="steps">
+      <li>
+        <span class="steps__n">1</span>
+        <div>
+          <h3>생애위험지도를 이해합니다</h3>
+          <p>지금 보고 계신 화면입니다. 왜 위험을 분석이 아니라 준비의 관점으로 보는지, 이 지도가 무엇을 알려주는지 먼저 확인합니다.</p>
+          <div class="tags"><span>지금 이 단계</span></div>
+        </div>
+        <span class="steps__ref">Step 01</span>
+      </li>
+      <li>
+        <span class="steps__n">2</span>
+        <div>
+          <h3>위험에 대해 이해합니다</h3>
+          <p>걱정되는 질병 분야를 고르고, 그 안에 어떤 병들이 있는지 읽어봅니다. 증상과 원인, 치료 방법과 진료 흐름, 그리고 어떤 보장이 필요해지는지까지 확인합니다.</p>
+          <div class="tags"><span>18개 질병 분야</span><span>212개 질병군</span><span>중증질환 4가지</span></div>
+        </div>
+        <span class="steps__ref">Step 02</span>
+      </li>
+      <li>
+        <span class="steps__n">3</span>
+        <div>
+          <h3>나의 준비수준을 결정합니다</h3>
+          <p>가계 수입과 지출, 비상자금을 직접 입력하거나 우리나라 평균 수준을 골라 자동으로 채웁니다. 위험을 대하는 태도에 따라 준비할 금액이 달라집니다.</p>
+          <div class="tags"><span>안정우선형</span><span>균형준비형</span><span>위험수용형</span></div>
+        </div>
+        <span class="steps__ref">Step 03</span>
+      </li>
+      <li>
+        <span class="steps__n">4</span>
+        <div>
+          <h3>준비지도를 확인합니다</h3>
+          <p>필요한 금액과 내가 이미 준비한 금액을 나란히 놓고 봅니다. 질병별로 진단·수술·치료·입원·통원·간병이 충분한지 한 장으로 보입니다.</p>
+          <div class="tags"><span>질병 × 급부 매트릭스</span><span>필요금액 최소–평균–최대</span><span>내 준비금액</span></div>
+        </div>
+        <span class="steps__ref">Step 04</span>
+      </li>
+      <li>
+        <span class="steps__n">5</span>
+        <div>
+          <h3>대안을 확인합니다</h3>
+          <p>비어 있는 곳을 어떻게 채울 수 있는지 살펴봅니다. AI가 정리해 드리고, 더 알아보고 싶으시면 비대면·비실명 상담으로 이어집니다.</p>
+          <div class="tags"><span>AI 제안</span><span>보고서 받기</span><span>비대면 · 비실명 상담</span></div>
+        </div>
+        <span class="steps__ref">Step 05</span>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section class="band band--plain close">
+  <div class="wrap">
+    <h2>이제 나의 생애위험준비지도를 그려볼까요?</h2>
+    <p>첫 단계는 “무엇이 걱정되는지” 고르는 것뿐입니다.</p>
+    <div class="acts"><a class="btn btn--go" href="step2.html">위험 선택하러 가기 →</a></div>
+  </div>
+</section>
+
+<div class="wrap">
+  
+
+  <section class="ground">
+    <div class="ground__notice">
+      <p class="ground__nh">의료진 확인 안내</p>
+      <p>일반 정보입니다. 실제 상태는 의료기관에서 확인하셔야 합니다.
+        진단이나 치료를 대신하지 않으며, 특정 보험상품을 권유하지 않습니다.</p>
+    </div>
+
+    <div class="ground__src">
+      <h2 class="ground__sh">이 내용은 어디에서 왔나요</h2>
+      <p>질병 분류는 통계청 <strong>한국표준질병사인분류(KCD) 8차</strong>, 그 바탕은 WHO의 ICD입니다.
+        증상·치료 설명은 질병관리청 국가건강정보포털과 대한의학회 임상진료지침정보센터 자료를 다시 쓴 것입니다.</p>
+      <p>의료비와 입원일수는 국민건강보험공단·건강보험심사평가원 <strong>2024년 진료 통계</strong>,
+        산정특례는 공단 「본인일부부담금 산정특례 제도」를 따랐습니다.</p>
+      <p class="ground__links">바로가기 —
+        <a href="https://www.koicd.kr" target="_blank" rel="noopener">질병분류정보센터(KOICD)</a> ·
+        <a href="https://icd.who.int" target="_blank" rel="noopener">WHO ICD</a> ·
+        <a href="https://www.nhis.or.kr/static/html/wbma/c/wbmac0215.html" target="_blank" rel="noopener">국민건강보험공단 산정특례</a> ·
+        <a href="https://www.hira.or.kr" target="_blank" rel="noopener">건강보험심사평가원</a> ·
+        <a href="https://health.kdca.go.kr" target="_blank" rel="noopener">국가건강정보포털</a> ·
+        <a href="https://www.guideline.or.kr" target="_blank" rel="noopener">임상진료지침정보센터</a></p>
+      <p class="ground__updated">데이터 기준일 2026-09-02 · 본 문구는 소비자 이해를 돕기 위한 초안이며 의료전문가 검수가 필요합니다.</p>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <p><b>헤인파트너스(주)</b> · MRCS 생애위험준비지도</p>
+    <p>본 서비스는 정보 제공을 목적으로 하며, 특정 보험상품의 가입을 권유하지 않습니다.</p>
+  </footer>
+</div>
+</body>
+</html>
